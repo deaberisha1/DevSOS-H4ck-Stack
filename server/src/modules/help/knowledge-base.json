@@ -1,0 +1,62 @@
+[
+  {
+    "id": "kb-001",
+    "title": "CORS errors with Express and React",
+    "tags": ["cors", "express", "react", "fetch"],
+    "content": "Install the 'cors' npm package. In your Express app: `app.use(cors({ origin: 'http://localhost:3000' }))`. Make sure this middleware is added BEFORE your route definitions. If using credentials (cookies), add `credentials: true` to the cors config and `credentials: 'include'` in your fetch calls."
+  },
+  {
+    "id": "kb-002",
+    "title": "Socket.IO connection issues",
+    "tags": ["socket.io", "websocket", "connection", "real-time"],
+    "content": "Common fixes: 1) Ensure the Socket.IO server and client versions match. 2) Pass the correct server URL: `io('http://localhost:5000')`. 3) If behind a proxy, configure `path` option. 4) Add CORS config to the Socket.IO server: `new Server(httpServer, { cors: { origin: 'http://localhost:3000' } })`. 5) Check that the HTTP server (not Express app) is passed to Socket.IO."
+  },
+  {
+    "id": "kb-003",
+    "title": "MySQL connection refused / ECONNREFUSED",
+    "tags": ["mysql", "database", "connection", "docker"],
+    "content": "Verify MySQL is running: `systemctl status mysql` or `docker ps`. Check host/port in your connection config — Docker uses 'localhost' on the host but 'db' or the container name inside docker-compose. If using mysql2, ensure you're using `mysql.createPool()` or `mysql.createConnection()` with the correct config object. Default port is 3306."
+  },
+  {
+    "id": "kb-004",
+    "title": "React state not updating after API call",
+    "tags": ["react", "state", "useEffect", "useState", "async"],
+    "content": "Common causes: 1) Not awaiting the fetch/axios call before setting state. 2) Stale closure in useEffect — add the dependency to the deps array. 3) Mutating state directly instead of creating a new object/array (use spread operator or map). 4) Missing error handling — wrap in try/catch and check the response status. 5) If using response.json(), remember it returns a promise."
+  },
+  {
+    "id": "kb-005",
+    "title": "Git merge conflicts",
+    "tags": ["git", "merge", "conflict", "branch"],
+    "content": "Steps: 1) Run `git status` to see conflicted files. 2) Open each file — look for <<<<<<< / ======= / >>>>>>> markers. 3) Decide which changes to keep (or combine both). 4) Remove the conflict markers. 5) `git add <file>` then `git commit`. To avoid conflicts: pull from main frequently, communicate with teammates about which files you're editing."
+  },
+  {
+    "id": "kb-006",
+    "title": "TypeScript type errors with event handlers",
+    "tags": ["typescript", "react", "event", "types", "onChange"],
+    "content": "Common fix: Use the correct event type. For input onChange: `(e: React.ChangeEvent<HTMLInputElement>)`. For form onSubmit: `(e: React.FormEvent<HTMLFormElement>)`. For button onClick: `(e: React.MouseEvent<HTMLButtonElement>)`. If the event target value is needed: `(e.target as HTMLInputElement).value` or use the generic type."
+  },
+  {
+    "id": "kb-007",
+    "title": "Express API returns HTML instead of JSON",
+    "tags": ["express", "api", "routing", "json", "404"],
+    "content": "This usually means the request is hitting a catch-all route (like React's `index.html` served by Express static middleware) instead of your API route. Fix: 1) Make sure API routes are registered BEFORE `express.static()`. 2) Prefix all API routes with `/api/`. 3) Check for typos in the route path. 4) Verify the HTTP method matches (GET vs POST)."
+  },
+  {
+    "id": "kb-008",
+    "title": "Environment variables not loading (dotenv)",
+    "tags": ["dotenv", "env", "environment", "config"],
+    "content": "Checklist: 1) `require('dotenv').config()` must be at the TOP of your entry file, before any other imports that use env vars. 2) The `.env` file must be in the directory where you run the node command (usually project root). 3) No spaces around `=` in the .env file. 4) Restart the server after changing .env. 5) Never commit .env to git — use .env.example instead."
+  },
+  {
+    "id": "kb-009",
+    "title": "CSS not applying / styles not showing",
+    "tags": ["css", "styling", "react", "tailwind", "import"],
+    "content": "Quick checks: 1) Is the CSS file imported? (`import './styles.css'`). 2) Check for specificity issues — use browser DevTools to inspect. 3) If using CSS modules, use `styles.className` syntax. 4) If Tailwind: ensure `content` in tailwind.config.js includes your file paths. 5) Clear browser cache (Ctrl+Shift+R). 6) Check for typos in class names."
+  },
+  {
+    "id": "kb-010",
+    "title": "Async/await errors and unhandled promise rejections",
+    "tags": ["async", "await", "promise", "error", "node"],
+    "content": "Rules: 1) Every `await` must be inside an `async` function. 2) Wrap await calls in try/catch for error handling. 3) In Express routes, pass errors to `next(err)` or use an async wrapper. 4) Don't forget to `await` — a missing await returns a pending Promise, not the value. 5) For parallel operations, use `Promise.all([...])` instead of sequential awaits."
+  }
+]

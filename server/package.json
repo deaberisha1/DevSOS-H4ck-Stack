@@ -1,0 +1,26 @@
+{
+  "name": "devsos-server",
+  "version": "1.0.0",
+  "description": "DevSOS — Real-Time Hackathon Mentorship Platform (Backend)",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "db:migrate": "node src/database/migrate.js",
+    "db:seed": "node src/database/seed.js",
+    "db:reset": "node src/database/migrate.js --fresh && node src/database/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "socket.io": "^4.7.5",
+    "mysql2": "^3.11.0",
+    "cors": "^2.8.5",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "nanoid": "^3.3.7",
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
