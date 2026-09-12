@@ -1,5 +1,1 @@
-﻿{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://devsos-h4ck-stack.onrender.com/api/:path*" }
-  ]
-}
+{"rewrites":[{"source":"/api/:path*","destination":"https://devsos-h4ck-stack.onrender.com/api/:path*"}]}
