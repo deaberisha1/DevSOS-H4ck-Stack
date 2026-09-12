@@ -1,0 +1,97 @@
+﻿.page { background:var(--bg); }
+.hero { position:relative; overflow:hidden; text-align:center; background:#f4edfc; padding:72px 24px 30px; border-bottom:1px solid #e0d2ef; }
+.kicker { margin:0 0 22px; color:var(--accent); font-size:10px; font-weight:750; letter-spacing:.16em; text-transform:uppercase; }
+.hero h1 { margin:0; font-size:clamp(44px,6.7vw,88px); font-weight:750; line-height:1.05; letter-spacing:-.065em; animation:rise .8s ease-out both; }
+.hero h1 span,.centerHeading h2 span { color:var(--accent); }
+.heroCopy { margin:26px auto 0; color:var(--text-muted); font-size:16px; line-height:1.8; }
+.heroVisual { position:relative; width:min(900px,100%); margin:16px auto 0; }
+.heroVisual > svg { display:block; width:100%; animation:rise 1s .15s both; }
+.heroVisual > svg path:first-child { animation:flow 4s linear; }
+.heroNode { position:absolute; top:50%; left:5%; transform:translateY(-50%); display:grid; justify-items:center; gap:10px; width:160px; padding:20px; border:1px solid #dccae9; border-radius:16px; background:#fff; color:var(--accent); box-shadow:0 7px 0 #e8dbf4; }
+.heroNode:last-child { left:auto; right:5%; background:#e6f4d3; border-color:#c8ddac; color:#274712; }
+.heroNode span { font-size:12px; font-weight:650; }
+.scrollLink { display:inline-flex; align-items:center; gap:12px; min-height:44px; color:var(--text-muted); font-size:11px; text-decoration:none; }
+.scrollLink svg { transform:rotate(90deg); transition:translate .2s; }
+.scrollLink:hover svg { translate:0 4px; }
+.section { max-width:1280px; padding:92px 48px; margin:auto; scroll-margin-top:100px; }
+.heading { display:flex; justify-content:space-between; align-items:flex-end; gap:56px; margin-bottom:40px; }
+.page h2 { text-wrap:balance; }
+.page h2 { margin:0; font-size:clamp(30px,3.5vw,46px); line-height:1.13; letter-spacing:-.045em; }
+.heading > p { margin:0; max-width:350px; font-size:14px; line-height:1.8; color:var(--text-muted); }
+.fragments,.reliability { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; }
+.fragments article { border:1px solid var(--border); border-radius:12px; padding:28px; height:100%; background:#fff; }
+.fragments article > svg { color:#9690a2; }
+.fragments article > p { font-size:9px; font-weight:700; letter-spacing:.12em; margin:24px 0 10px; color:var(--text-muted); }
+.fragments h3 { font-size:18px; line-height:1.45; margin:0; font-weight:600; letter-spacing:-.025em; }
+.ecosystem { background:#f4effa; border-block:1px solid var(--border); }
+.centerHeading { text-align:center; max-width:600px; margin:0 auto 48px; }
+.centerHeading > p:last-child { margin:22px 0 0; font-size:14px; color:var(--text-muted); }
+.roleGrid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+.network { display:grid; grid-template-columns:140px 1fr; gap:50px; align-items:center; }
+.hub { position:relative; display:grid; justify-items:center; gap:8px; padding:24px 8px; border:1px solid #d8c7ec; background:#fff; border-radius:22px; }
+.hub::after { content:""; position:absolute; left:100%; top:50%; width:50px; height:1px; background:#c5a5e5; }
+.hub strong { font-size:18px; letter-spacing:-.04em; }
+.hub small { font-size:10px; color:var(--text-muted); }
+.roleButtons { display:grid; gap:14px; position:relative; }
+.roleButtons::before { content:""; position:absolute; left:-25px; width:25px; top:36px; bottom:36px; border:1px solid #c5a5e5; border-right:0; }
+.roleButtons button { position:relative; display:flex; align-items:center; gap:12px; text-align:left; min-height:72px; border:1px solid #d8c7ec; padding:16px; background:#fff; transition:background .2s,border-color .2s,transform .2s; }
+.roleButtons button::before { content:""; position:absolute; right:100%; width:25px; height:1px; background:#c5a5e5; }
+.roleButtons button > span { flex:1; font-size:13px; font-weight:650; }
+.roleButtons button[aria-pressed="true"] { background:#00004e; color:#fff; border-color:#00004e; }
+.roleButtons button[aria-pressed="true"] svg { color:#b9e781; }
+.roleButtons button:hover { transform:translateX(3px); border-color:var(--accent); }
+.roleDetail { min-height:320px; }
+.roleDetail h3 { font-size:30px; letter-spacing:-.04em; line-height:1.2; margin:0 0 18px; }
+.roleDetail p:not(.kicker) { color:var(--text-muted); font-size:14px; line-height:1.85; }
+.roleNote { display:flex; align-items:center; gap:9px; font-size:12px; font-weight:650; margin:22px 0 15px; }
+.roleNote svg { color:var(--accent); }
+.journey { display:grid; grid-template-columns:1fr 1.05fr; gap:64px; align-items:start; }
+.timeline { padding:0; margin:0; list-style:none; }
+.timeline li { position:relative; }
+.timeline li:not(:last-child)::after { content:""; position:absolute; width:1px; background:#d8c7ec; top:51px; bottom:-39px; left:97px; pointer-events:none; }
+.timeline button { display:grid; grid-template-columns:54px 12px 1fr; align-items:center; gap:26px; padding:24px 12px; border:0; background:transparent; width:100%; text-align:left; border-radius:10px; }
+.timeline button:hover { background:#f5f0fb; }
+.time { font:12px monospace; color:var(--text-muted); }
+.timelineDot { width:11px; height:11px; border:2px solid #bfa4d9; background:var(--bg); border-radius:50%; z-index:1; }
+.timeline button[aria-pressed="true"] .timelineDot { border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 5px #eee3f9; }
+.timeline button small { display:block; font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+.timeline button strong { display:block; font-size:17px; line-height:1.4; font-weight:600; letter-spacing:-.025em; }
+.timeline button[aria-pressed="true"] strong { color:var(--accent); }
+.journeyPanel { background:#eee3f8; padding:28px; border:1px solid #dcc7ec; border-radius:18px; }
+.exampleLabel { display:flex; justify-content:space-between; font-size:9px; font-weight:750; letter-spacing:.11em; margin-bottom:22px; }
+.requestCard { background:#fff; border:1px solid #d8c7ec; border-radius:12px; padding:24px; box-shadow:0 6px 0 #dfcfef; }
+.requestTop { display:flex; justify-content:space-between; align-items:center; color:var(--accent); }
+.requestTop span { background:#eef5e4; color:#38581c; font-size:10px; padding:5px 10px; border-radius:20px; }
+.requestCard > p { font-size:11px; color:var(--text-muted); margin:24px 0 9px; }
+.requestCard h3 { margin:0; min-height:56px; font-size:22px; line-height:1.3; letter-spacing:-.025em; }
+.requestFooter { display:flex; align-items:center; gap:7px; margin-top:25px; padding-top:16px; border-top:1px solid var(--border); font-size:10px; color:var(--text-muted); }
+.requestFooter span { margin-left:auto; }
+.journeyCopy { font-size:13px; line-height:1.8; min-height:94px; margin:25px 0; color:#61506f; }
+.controls { display:flex; justify-content:space-between; gap:12px; }
+.controls button { font-size:12px; display:flex; align-items:center; gap:8px; background:transparent; border-color:#cbb2e0; }
+.controls button:last-child { background:#00004e; color:#fff; border-color:#00004e; }
+.demoSection { background:#f5f2fa; border-block:1px solid var(--border); }
+.demoGrid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.bodyCopy { max-width:420px; font-size:15px; line-height:1.85; color:var(--text-muted); margin-top:24px; }
+.checks { list-style:none; padding:0; margin:28px 0 0; display:grid; gap:13px; font-size:13px; }
+.checks li { display:flex; gap:10px; align-items:center; }
+.checks svg { color:var(--accent); }
+.reliability article { height:100%; padding:28px; border-top:2px solid #dac3ef; }
+.reliability svg { color:var(--accent); }
+.reliability h3 { font-size:20px; line-height:1.3; letter-spacing:-.025em; margin:23px 0 12px; }
+.reliability p { font-size:14px; line-height:1.85; color:var(--text-muted); margin:0; }
+.faqSection { display:grid; grid-template-columns:1fr 1.25fr; gap:70px; border-top:1px solid var(--border); }
+.closing { background:#00004e; color:#fff; text-align:center; padding:72px 24px; display:grid; justify-items:center; }
+.closing > svg { margin-bottom:28px; }
+.closing .kicker { color:#c8a9ed; }
+.closing a:first-child { background:#9cdd2e; color:#00004e; border-color:#9cdd2e; }
+.closing a:first-child:hover { background:#b6ec60; }
+.secondaryLink { display:inline-flex; align-items:center; gap:8px; color:#fff; font-size:14px; text-decoration:none; padding:12px 16px; }
+.secondaryLink:hover { text-decoration:underline; }
+.swap { animation:rise .35s ease-out; }
+@keyframes rise { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes flow { to { stroke-dashoffset:-112; } }
+@media(max-width:1050px) { .section { padding:72px 32px; } .roleGrid,.journey,.demoGrid { gap:35px; } .network { grid-template-columns:110px 1fr; gap:35px; } .hub::after { width:35px; } .roleButtons button { padding:12px; gap:8px; } .roleDetail h3 { font-size:27px; } }
+@media(max-width:800px) { .hero { padding-top:52px; } .heroNode { width:130px; padding:16px 10px; } .heroVisual { margin-top:25px; } .heading { display:block; } .heading > p { max-width:540px; margin-top:22px; } .roleGrid,.journey,.demoGrid,.faqSection { grid-template-columns:1fr; } .roleDetail { min-height:260px; } .network { max-width:510px; width:100%; margin:auto; grid-template-columns:140px 1fr; gap:50px; } .hub::after { width:50px; } .fragments,.reliability { gap:12px; } .fragments article { padding:20px; } .reliability article { padding:24px 10px; } .demoGrid > div:last-child { width:100%; } }
+@media(max-width:560px) { .section { padding:54px 22px; } .hero h1 { font-size:clamp(38px,10vw,56px); } .heroCopy { font-size:14px; } .heroVisual { margin:32px auto 14px; } .heroNode { width:86px; padding:12px 5px; border-radius:10px; gap:6px; left:0; } .heroNode:last-child { right:0; } .heroNode span { font-size:9px; } .heroNode svg { width:19px; } .fragments,.reliability { grid-template-columns:1fr; } .fragments article { display:grid; grid-template-columns:26px 1fr; gap:10px 15px; } .fragments article > p { margin:5px 0 0; } .fragments h3 { grid-column:2; } .network { grid-template-columns:95px 1fr; gap:32px; } .hub::after { width:32px; } .hub small { font-size:8px; } .roleButtons button > svg:first-child { width:18px; } .roleButtons button > span { font-size:11px; } .timeline button { gap:18px; grid-template-columns:45px 12px 1fr; } .timeline li:not(:last-child)::after { left:80px; } .timeline button strong { font-size:15px; } .journeyPanel { padding:19px; } .requestCard { padding:20px; } .requestFooter { flex-wrap:wrap; } .journeyCopy { min-height:0; } .closing { padding:55px 22px; } .closing > div { justify-content:center; } }
+@media(prefers-reduced-motion:reduce) { .swap,.hero h1,.heroVisual > svg,.heroVisual > svg path:first-child { animation:none; } .roleButtons button,.scrollLink svg { transition:none; } .roleButtons button:hover { transform:none; } }

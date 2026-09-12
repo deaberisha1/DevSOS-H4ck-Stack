@@ -1,0 +1,10 @@
+﻿.art { max-width:370px; margin-top:24px; --art-x:0px; --art-y:0px; }
+.art svg { display:block; width:100%; transform:translate(var(--art-x),var(--art-y)); transition:transform .4s ease-out; }
+.orbit,.spark { transform-box:fill-box; transform-origin:center; }
+.orbit { animation:orbit-in 2.8s cubic-bezier(.2,.7,.2,1) both; }
+.spark { animation:spark-in 2.8s cubic-bezier(.2,.7,.2,1) both; }
+.connector { animation:signal 4s linear; }
+@keyframes orbit-in { from { opacity:0; transform:rotate(-55deg) scale(.7); } to { opacity:1; transform:rotate(0) scale(1); } }
+@keyframes spark-in { 0% { opacity:0; transform:rotate(-45deg) scale(.5); } 55% { opacity:1; transform:rotate(10deg) scale(1.08); } 100% { transform:rotate(0) scale(1); } }
+@keyframes signal { to { stroke-dashoffset:-96; } }
+@media(prefers-reduced-motion:reduce) { .art svg { transform:none; transition:none; } .orbit,.spark,.connector { animation:none; } }

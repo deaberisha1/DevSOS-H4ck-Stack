@@ -1,0 +1,175 @@
+﻿.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 64px;
+}
+
+.brand {
+  margin-right: auto;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--surface);
+  font-weight: 650;
+  transition: border-color 0.15s;
+}
+
+.toggle:hover {
+  border-color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: color 0.15s;
+}
+
+.link:hover {
+  color: var(--text);
+}
+
+/* A short rule grows under the link on hover, and stays put on the current
+   page — which is also announced in text for anyone not seeing it. */
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.55rem;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s ease-out;
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+}
+
+.linkActive {
+  color: var(--text);
+}
+
+.linkActive::after {
+  transform: scaleX(1);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--tap);
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 650;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.cta:hover {
+  background: var(--accent-strong);
+}
+
+.cta svg {
+  transition: transform 0.15s ease-out;
+}
+
+.cta:hover svg {
+  transform: translateX(2px);
+}
+
+/* Reading progress: a hairline under the header. Decorative. */
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Mobile: the nav becomes a disclosure panel under the bar. */
+@media (max-width: 959px) {
+  .nav {
+    display: none;
+  }
+
+  .bar { flex-wrap: wrap; gap: 0; padding-top: 18px; padding-bottom: 18px; }
+  .navOpen {
+    flex-basis: 100%;
+    margin-top: 16px;
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.5rem 0 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .link,
+  .cta {
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .link::after {
+    display: none;
+  }
+
+  .linkActive {
+    background: var(--surface-2);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+}
+
+@media (min-width: 960px) {
+  .toggle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link::after,
+  .cta svg,
+  .progress {
+    transition: none;
+  }
+}
+
+.bar { min-height:82px; }
+
+

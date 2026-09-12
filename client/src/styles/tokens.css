@@ -1,0 +1,40 @@
+﻿:root {
+  color-scheme: light;
+
+  --bg: #fdfcff;
+  --surface: #ffffff;
+  --surface-2: #f5f1fc;
+  --border: #e3ddef;
+  --text: #00004e;
+  --text-muted: #606078;
+  --accent: #7334bb;
+  --accent-strong: #58248f;
+  --accent-soft: #f0e5fc;
+  --accent-contrast: #ffffff;
+  --ok: #17794a;
+  --danger: #a3131f;
+  --warning-bg: #fff4d6;
+  --warning-border: #b58600;
+  --focus: #7334bb;
+
+  /* Status colours. Always rendered next to the status word, never alone. */
+  --waiting-bg: #fff2d9;
+  --waiting-border: #b07c00;
+  --waiting-text: #6b4a00;
+  --claimed-bg: #e3ebff;
+  --claimed-border: #3b5bcc;
+  --claimed-text: #23378f;
+  --progress-bg: #e2f2ea;
+  --progress-border: #17794a;
+  --progress-text: #0f5735;
+  --resolved-bg: #eceef2;
+  --resolved-border: #6e6e7a;
+  --resolved-text: #44444e;
+
+  --radius: 10px;
+  --gap: 0.75rem;
+  --tap: 44px; /* minimum touch target */
+}
+
+
+
