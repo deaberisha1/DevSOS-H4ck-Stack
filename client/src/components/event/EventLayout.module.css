@@ -1,0 +1,274 @@
+/* Event shell: a persistent sidebar for every role, collapsing into a
+   disclosure panel under 1040px. */
+
+.shell {
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+@media (min-width: 1040px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 268px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* --- sidebar -------------------------------------------------------------- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 22px 20px 26px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+@media (min-width: 1040px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 1039px) {
+  .sidebar {
+    display: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebarOpen {
+    display: flex;
+  }
+}
+
+.brand {
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+/* The event you are actually inside, stated plainly. */
+.eventCard {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  padding: 15px 16px;
+}
+
+.eventName {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.eventMeta {
+  display: block;
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 11px;
+}
+
+.pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pillOpen {
+  border-color: var(--progress-border);
+  background: var(--progress-bg);
+  color: var(--progress-text);
+}
+
+.pillClosed {
+  border-color: var(--resolved-border);
+  background: var(--resolved-bg);
+  color: var(--resolved-text);
+}
+
+.navGroup {
+  display: grid;
+  gap: 3px;
+}
+
+.navLabel {
+  margin: 0 0 7px;
+  padding-left: 12px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+
+.navLink:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.navLink svg {
+  flex: none;
+  color: currentColor;
+}
+
+/* The current screen is marked by fill, border and aria-current — never by
+   colour on its own. */
+.navLinkActive {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.navCount {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebarFoot {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.who {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding: 0 12px;
+}
+
+.who strong {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.leave {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.leave:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* --- top bar (mobile) ----------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
+@media (min-width: 1040px) {
+  .topbar {
+    display: none;
+  }
+}
+
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  border-color: var(--accent);
+}
+
+.topbarTitle {
+  font-size: 13px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.topbarTitle span {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* --- content -------------------------------------------------------------- */
+
+.content {
+  min-width: 0;
+}
+
+.main {
+  max-width: 1180px;
+  padding: 26px clamp(16px, 4vw, 40px) 80px;
+  margin: 0 auto;
+}

@@ -5,6 +5,29 @@ export interface AssistResult {
   resources?: { title: string; url: string }[];
   simulated?: boolean;
 }
+
+export interface AssistMessage {
+  role: "user" | "agent";
+  content: string;
+}
+
+export interface AssistReply extends AssistResult {
+  reply: string;
+  /** The agent thinks a mentor is now the better next step. */
+  escalate?: boolean;
+}
+
+/**
+ * A follow-up turn with the assistant. The whole conversation is sent each
+ * time: the client keeps no model state, and only the server may talk to a
+ * model provider.
+ */
+export function assistChat(
+  eventId: string,
+  input: { messages: AssistMessage[]; category: string },
+): Promise<AssistReply> {
+  return api.post(`/api/events/${encodeURIComponent(eventId)}/assist`, input);
+}
 // Proposed backend contract. Only the server may communicate with a model provider.
 export function assist(
   eventId: string,

@@ -8,6 +8,8 @@ export interface MockMember {
   tableLabel?: string;
   skills: Tag[];
   isAvailable: boolean;
+  /** UTC ISO; when this member joined the event. */
+  joinedAt?: string;
 }
 
 export interface MockEvent {
@@ -39,6 +41,23 @@ export function nextId(prefix: string): string {
   return `${prefix}_${seq.toString().padStart(4, "0")}`;
 }
 
+function seedParticipant(
+  displayName: string,
+  tableLabel: string,
+  joinedMinutesAgo: number,
+): MockMember {
+  return {
+    id: `mem_${displayName.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
+    eventId: EVENT_ID,
+    displayName,
+    role: "PARTICIPANT",
+    tableLabel,
+    skills: [],
+    isAvailable: true,
+    joinedAt: minutesAgo(joinedMinutesAgo),
+  };
+}
+
 function seedRequest(partial: Partial<HelpRequest> & Pick<HelpRequest, "title" | "primaryTag" | "requesterName" | "tableLabel">): HelpRequest {
   const created = partial.createdAt ?? minutesAgo(3);
   return {
@@ -66,7 +85,16 @@ export function createDb(): MockDb {
         role: "ORGANIZER",
         skills: [],
         isAvailable: true,
+        joinedAt: minutesAgo(240),
       },
+      // Teams already in the room. Their ids are wired to the seeded
+      // requests below, so an organizer sees a populated roster.
+      seedParticipant("Team Northstar", "B4", 95),
+      seedParticipant("Team Kernel Panic", "C2", 88),
+      seedParticipant("Team Semicolon", "A1", 63),
+      seedParticipant("Team Aria", "D7", 140),
+      seedParticipant("Team Lighthouse", "E5", 45),
+      seedParticipant("Team Off-by-One", "F2", 32),
     ],
     requests: [
       seedRequest({

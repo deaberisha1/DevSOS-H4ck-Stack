@@ -1,0 +1,280 @@
+/* Participant AI assistant: a conversation that ends in either a solved
+   problem or a well-written mentor request. */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.thread {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.threadTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px 22px;
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--border);
+}
+
+.threadTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.messages {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 22px;
+  list-style: none;
+  max-height: 62vh;
+  overflow-y: auto;
+}
+
+.turn {
+  display: grid;
+  gap: 8px;
+  max-width: 46rem;
+}
+
+.turnUser {
+  justify-self: end;
+  text-align: left;
+}
+
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.turnUser .who {
+  justify-self: end;
+}
+
+.bubble {
+  padding: 15px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bubbleUser {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.steps {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+.steps li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.resource:hover {
+  text-decoration: underline;
+}
+
+.escalate {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.escalate p {
+  margin: 0 0 12px;
+}
+
+.composer {
+  border-top: 1px solid var(--border);
+  padding: 16px 22px 20px;
+  background: var(--surface);
+}
+
+.composer label {
+  display: block;
+  font-size: 13px;
+  font-weight: 650;
+  margin-bottom: 8px;
+}
+
+.composer textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.composer textarea:focus-visible {
+  border-color: var(--accent);
+}
+
+.composerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.composerHint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0;
+  flex: 1 1 180px;
+}
+
+.thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* --- side rail ----------------------------------------------------------- */
+
+.rail {
+  display: grid;
+  gap: 16px;
+  position: sticky;
+  top: 18px;
+}
+
+@media (max-width: 960px) {
+  .rail {
+    position: static;
+  }
+}
+
+.railCard {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 20px;
+}
+
+.railCard h2 {
+  margin: 12px 0 8px;
+  font-size: 17px;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+}
+
+.railCard p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.railCard > svg {
+  color: var(--accent);
+}
+
+.railList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 11px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.railList li {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+}
+
+.railList svg {
+  margin-top: 1px;
+  color: var(--ok);
+}
+
+.privacy {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+  padding: 18px 20px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.privacy strong {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.threadError {
+  padding: 0 22px 4px;
+}

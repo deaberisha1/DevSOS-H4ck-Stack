@@ -24,7 +24,11 @@ const fail = (
 const me = () => db.members.find((member) => member.id === db.currentMemberId);
 const eventName = "HackStack Weekend";
 for (const request of db.requests) {
-  request.requesterId = id("seed-participant");
+  // Seeded requests belong to the seeded teams, so the organizer roster and
+  // the queue agree with each other.
+  request.requesterId =
+    db.members.find((m) => m.displayName === request.requesterName)?.id ??
+    id("seed-participant");
   request.category = categoryOf(request);
   if (request.mentorName) request.mentorId = "mem_sam";
 }
@@ -115,6 +119,7 @@ function route(
       displayName: body?.displayName ?? "",
       role: body?.requestedRole ?? "PARTICIPANT",
       mentorInvite: body?.mentorInvite ?? "",
+      organizerInvite: body?.organizerInvite ?? "",
     });
     const event = db.events.find(
       (item) => item.code === String(body?.eventCode).trim().toUpperCase(),
@@ -124,15 +129,20 @@ function route(
         "That event code wasn't found. Check it with your organizer.";
     if (
       body?.requestedRole &&
-      !["PARTICIPANT", "MENTOR"].includes(body.requestedRole)
+      !["PARTICIPANT", "MENTOR", "ORGANIZER"].includes(body.requestedRole)
     )
-      errors.requestedRole = "Choose Participant or Mentor.";
-    // An invitation, not a client-selected role, grants mentor access. Never grants organizer.
+      errors.requestedRole = "Choose Participant, Mentor or Organizer.";
+    // An invitation, not a client-selected role, grants elevated access.
     const invite = String(body?.mentorInvite ?? "")
+      .trim()
+      .toUpperCase();
+    const organizerInvite = String(body?.organizerInvite ?? "")
       .trim()
       .toUpperCase();
     if (invite && invite !== "MENTOR")
       errors.mentorInvite = "That mentor invitation is not valid.";
+    if (organizerInvite && organizerInvite !== "ORGANIZER")
+      errors.organizerInvite = "That organizer invitation is not valid.";
     if (Object.keys(errors).length)
       return fail(
         400,
@@ -142,14 +152,21 @@ function route(
       );
     if (event!.status === "CLOSED")
       return fail(403, "EVENT_CLOSED", "This event is closed.");
+    const role =
+      organizerInvite === "ORGANIZER"
+        ? "ORGANIZER"
+        : invite === "MENTOR"
+          ? "MENTOR"
+          : "PARTICIPANT";
     const joined: MockMember = {
       id: id("member"),
       eventId: event!.id,
       displayName: body.displayName.trim(),
-      role: invite === "MENTOR" ? "MENTOR" : "PARTICIPANT",
+      role,
       tableLabel: body.tableLabel?.trim(),
       skills: [],
-      isAvailable: invite === "MENTOR",
+      isAvailable: role === "MENTOR",
+      joinedAt: new Date().toISOString(),
     };
     db.members.push(joined);
     db.currentMemberId = joined.id;
@@ -200,6 +217,42 @@ function route(
         })),
     );
   }
+  if (seg[3] === "participants" && method === "GET") {
+    if (member.role !== "ORGANIZER")
+      return fail(403, "FORBIDDEN", "Organizer access is required.");
+    const active = ["WAITING", "CLAIMED", "IN_PROGRESS"];
+    return ok(
+      db.members
+        .filter(
+          (item) => item.eventId === event.id && item.role === "PARTICIPANT",
+        )
+        .map((item) => {
+          const mine = db.requests.filter(
+            (r) => r.eventId === event.id && r.requesterId === item.id,
+          );
+          const open = mine.find((r) => active.includes(r.status));
+          return {
+            id: item.id,
+            displayName: item.displayName,
+            tableLabel: item.tableLabel,
+            joinedAt: item.joinedAt,
+            totalRequests: mine.length,
+            resolvedRequests: mine.filter((r) => r.status === "RESOLVED")
+              .length,
+            activeRequest: open
+              ? {
+                  id: open.id,
+                  title: open.title,
+                  status: open.status,
+                  createdAt: open.createdAt,
+                  mentorName: open.mentorName,
+                }
+              : undefined,
+          };
+        })
+        .sort((a, b) => a.displayName.localeCompare(b.displayName)),
+    );
+  }
   if (seg[3] === "stats" && method === "GET") {
     if (member.role !== "ORGANIZER")
       return fail(403, "FORBIDDEN", "Organizer access is required.");
@@ -247,25 +300,68 @@ function route(
   if (seg[3] === "assist" && method === "POST") {
     if (member.role !== "PARTICIPANT")
       return fail(403, "FORBIDDEN", "Participant access is required.");
-    if (String(body.title).includes("[fail-ai]"))
+    const conversation = Array.isArray(body?.messages) ? body.messages : null;
+    const lastMessage = conversation?.length
+      ? String(conversation[conversation.length - 1]?.content ?? "")
+      : "";
+    const subject = conversation ? lastMessage : String(body?.title ?? "");
+    if (subject.includes("[fail-ai]"))
       return fail(
         503,
         "ASSIST_UNAVAILABLE",
         "Assistance is temporarily unavailable.",
       );
+    const category = String(body?.category ?? "Frontend");
+    const resources = [
+      {
+        title: "MDN: what went wrong — debugging JavaScript",
+        url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_went_wrong",
+      },
+    ];
+    if (!conversation)
+      return ok({
+        simulated: true,
+        suggestions: [
+          `Reduce this ${category} problem to the smallest reproducible example and compare the expected and actual behavior.`,
+          "Inspect the first error and the values immediately before it. Change one thing at a time and rerun the example.",
+          "Check configuration, versions and environment differences. Share the smallest failing example and exact error with a mentor if you're still blocked.",
+        ],
+        resources,
+      });
+    // A follow-up turn. The demo agent reflects the question back with a
+    // concrete next step; a real server would call the model here.
+    const turn = conversation.filter(
+      (m: { role?: string }) => m?.role === "user",
+    ).length;
+    const opening = [
+      `Let's narrow this ${category.toLowerCase()} problem down.`,
+      "Good — that rules something out.",
+      "Still with you. One more angle:",
+      "Let's get a second pair of eyes on this.",
+    ][Math.min(turn - 1, 3)];
     return ok({
       simulated: true,
-      suggestions: [
-        `Reduce this ${body.category} problem to the smallest reproducible example and compare the expected and actual behavior.`,
-        "Inspect the first error and the values immediately before it. Change one thing at a time and rerun the example.",
-        "Check configuration, versions and environment differences. Share the smallest failing example and exact error with a mentor if you're still blocked.",
-      ],
-      resources: [
-        {
-          title: "MDN: debugging JavaScript",
-          url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_went_wrong",
-        },
-      ],
+      reply: `${opening} Based on "${subject.slice(0, 120)}", work through the steps below in order and note what changes after each one.`,
+      suggestions:
+        turn === 1
+          ? [
+              "Write down what you expected to happen and what happened instead, in one line each.",
+              "Find the first error in the console or logs — not the last one — and read the line above it.",
+              "Reproduce it in the smallest possible example, with everything unrelated removed.",
+            ]
+          : turn === 2
+            ? [
+                "Change exactly one thing and rerun. If nothing changes, put it back before trying the next idea.",
+                "Compare a working case with the failing one and list every difference, including versions and environment.",
+                "Print or log the values immediately before the failure rather than reasoning about what they should be.",
+              ]
+            : [
+                "Summarise what you have ruled out so far — that summary is most of a good mentor request.",
+                "If two ideas remain, test the cheaper one first.",
+                "Ask a mentor now: you have a clear description and a list of what you tried, which is exactly what they need.",
+              ],
+      resources,
+      escalate: turn >= 3,
     });
   }
   if (seg[3] !== "requests") return fail(404, "NOT_FOUND", "Not found.");
@@ -310,18 +406,8 @@ function route(
         "Please check the highlighted fields.",
         errors,
       );
-    if (
-      db.requests.some(
-        (r) =>
-          r.requesterId === member.id &&
-          ["WAITING", "CLAIMED", "IN_PROGRESS"].includes(r.status),
-      )
-    )
-      return fail(
-        409,
-        "ACTIVE_REQUEST",
-        "You already have an active request. Open it from your dashboard.",
-      );
+    // Several open requests per team are allowed; the queue shows each one
+    // separately so mentors can pick them up independently.
     const now = new Date().toISOString();
     const request: HelpRequest = {
       id: id("request"),

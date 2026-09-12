@@ -78,3 +78,16 @@ export function useCountUp(target: number, durationMs = 1100) {
 
   return { ref, value };
 }
+
+/**
+ * Re-renders on an interval so elapsed-time labels stay honest without every
+ * component owning a timer. Returns the current clock reading in ms.
+ */
+export function useNow(intervalMs = 1000): number {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), intervalMs);
+    return () => window.clearInterval(id);
+  }, [intervalMs]);
+  return now;
+}

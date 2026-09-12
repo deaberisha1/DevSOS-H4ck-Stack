@@ -26,6 +26,7 @@ export function validateJoin(input: {
   displayName: string;
   role: string;
   mentorInvite: string;
+  organizerInvite?: string;
 }): FieldErrors {
   const errors: FieldErrors = {};
   if (!input.eventCode.trim() || input.eventCode.trim().length > 40)
@@ -37,5 +38,7 @@ export function validateJoin(input: {
     errors.displayName = "Use a display name between 2 and 40 characters.";
   if (input.role === "MENTOR" && !input.mentorInvite.trim())
     errors.mentorInvite = "Enter the mentor invitation from your organizer.";
+  if (input.role === "ORGANIZER" && !(input.organizerInvite ?? "").trim())
+    errors.organizerInvite = "Enter the organizer invitation for this event.";
   return errors;
 }

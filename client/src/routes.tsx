@@ -20,6 +20,7 @@ import AccessibilityPage from "./pages/marketing/AccessibilityPage";
 import JoinPage from "./pages/JoinPage";
 import ParticipantHome from "./pages/ParticipantHome";
 import RequestForm from "./pages/RequestForm";
+import AssistantPage from "./pages/AssistantPage";
 import MentorWorkspace from "./pages/MentorWorkspace";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
 import RequestDetails from "./pages/RequestDetails";
@@ -166,6 +167,7 @@ export default function AppRoutes() {
           <Route element={<RequireRole allow={["PARTICIPANT"]} />}>
             <Route path="/event/:e" element={<ParticipantHome />} />
             <Route path="/event/:e/new" element={<RequestForm />} />
+            <Route path="/event/:e/assistant" element={<AssistantPage />} />
           </Route>
 
           <Route element={<RequireRole allow={["MENTOR"]} />}>

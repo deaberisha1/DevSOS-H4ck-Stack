@@ -4,10 +4,24 @@ import Logo from "../components/brand/Logo";
 import { useJoin } from "../hooks/useSession";
 import { homePathFor } from "../shared/navigation";
 import { validateJoin } from "../shared/validation";
-import type { FieldErrors } from "../shared/types";
+import type { FieldErrors, Role } from "../shared/types";
 import { USE_MOCK } from "../api/client";
 import { Alert, FieldError, css } from "../components/event/UI";
 import { IconArrowRight, IconUsers, IconKey } from "../components/icons";
+const ROLE_CHOICES: Array<{ value: Role; label: string; hint: string }> = [
+  {
+    value: "PARTICIPANT",
+    label: "Participant",
+    hint: "Ask for help from your table",
+  },
+  { value: "MENTOR", label: "Mentor", hint: "Pick up requests you can answer" },
+  {
+    value: "ORGANIZER",
+    label: "Organizer",
+    hint: "Run the room and see everyone",
+  },
+];
+
 export default function JoinPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -17,10 +31,11 @@ export default function JoinPage() {
     params.get("code") || params.get("eventCode") || "",
   );
   const [displayName, setName] = useState("");
-  const [role, setRole] = useState<"PARTICIPANT" | "MENTOR">("PARTICIPANT");
-  const [mentorInvite, setInvite] = useState("");
+  const [role, setRole] = useState<Role>("PARTICIPANT");
+  const [invite, setInvite] = useState("");
   const [table, setTable] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const inviteField = role === "ORGANIZER" ? "organizerInvite" : "mentorInvite";
   useEffect(() => {
     if (Object.keys(errors).length)
       form.current
@@ -62,7 +77,8 @@ export default function JoinPage() {
               eventCode,
               displayName,
               role,
-              mentorInvite,
+              mentorInvite: role === "MENTOR" ? invite : "",
+              organizerInvite: role === "ORGANIZER" ? invite : "",
             });
             if (table.trim().length > 30)
               fields.tableLabel = "Use at most 30 characters.";
@@ -74,8 +90,9 @@ export default function JoinPage() {
                 displayName: displayName.trim(),
                 requestedRole: role,
                 tableLabel: table.trim() || undefined,
-                mentorInvite:
-                  role === "MENTOR" ? mentorInvite.trim() : undefined,
+                mentorInvite: role === "MENTOR" ? invite.trim() : undefined,
+                organizerInvite:
+                  role === "ORGANIZER" ? invite.trim() : undefined,
               },
               {
                 onSuccess: (session) =>
@@ -90,8 +107,9 @@ export default function JoinPage() {
           <p className={css.muted}>Enter the code shared by your organizer.</p>
           {USE_MOCK && (
             <p className={css.demo}>
-              Demo: event <strong>HACKSTACK</strong>, mentor invitation{" "}
-              <strong>MENTOR</strong>. Use SERVERERROR as the event code to
+              Demo event <strong>HACKSTACK</strong> · mentor invitation{" "}
+              <strong>MENTOR</strong> · organizer invitation{" "}
+              <strong>ORGANIZER</strong>. Use SERVERERROR as the event code to
               preview a server failure.
             </p>
           )}
@@ -128,45 +146,58 @@ export default function JoinPage() {
             </div>
             <fieldset className={css.roleChoice}>
               <legend>How are you joining?</legend>
-              {(["PARTICIPANT", "MENTOR"] as const).map((value) => (
-                <label key={value}>
+              {ROLE_CHOICES.map((choice) => (
+                <label key={choice.value}>
                   <input
                     type="radio"
                     name="role"
-                    value={value}
-                    checked={role === value}
+                    value={choice.value}
+                    checked={role === choice.value}
                     onChange={() => {
-                      setRole(value);
+                      setRole(choice.value);
+                      setInvite("");
                       setErrors({});
                       mutation.reset();
                     }}
                   />
-                  {value === "PARTICIPANT" ? "Participant" : "Mentor"}
+                  <span>
+                    {choice.label}
+                    <small>{choice.hint}</small>
+                  </span>
                 </label>
               ))}
             </fieldset>
-            {role === "MENTOR" && (
+            {role !== "PARTICIPANT" && (
               <div className={css.field}>
-                <label htmlFor="mentorInvite">Mentor invitation</label>
+                <label htmlFor={inviteField}>
+                  {role === "MENTOR"
+                    ? "Mentor invitation"
+                    : "Organizer invitation"}
+                </label>
                 <input
-                  id="mentorInvite"
+                  id={inviteField}
                   type="password"
                   autoComplete="off"
-                  value={mentorInvite}
+                  value={invite}
                   onChange={(e) => setInvite(e.target.value)}
-                  aria-invalid={!!errors.mentorInvite}
-                  aria-describedby="invite-note mentorInvite-error"
+                  aria-invalid={!!errors[inviteField]}
+                  aria-describedby={`invite-note ${inviteField}-error`}
                 />
                 <small id="invite-note">
-                  Your organizer supplies this invitation. Access is confirmed
-                  by the event server.
+                  {role === "MENTOR"
+                    ? "Your organizer supplies this invitation."
+                    : "Organizer invitations are issued with the event."}{" "}
+                  Access is confirmed by the event server, never by this form.
                 </small>
-                <FieldError name="mentorInvite" errors={errors} />
+                <FieldError name={inviteField} errors={errors} />
               </div>
             )}
             <div className={css.field}>
               <label htmlFor="tableLabel">
-                Table or location <span>(optional for joining)</span>
+                {role === "PARTICIPANT"
+                  ? "Table or location"
+                  : "Where to find you"}{" "}
+                <span>(optional for joining)</span>
               </label>
               <input
                 id="tableLabel"

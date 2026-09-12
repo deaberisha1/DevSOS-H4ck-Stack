@@ -1,6 +1,11 @@
 ﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { actOnRequest, getRequest, listRequests } from "../api/requests";
-import { getEvent, getMentors, getStats } from "../api/events";
+import {
+  getEvent,
+  getMentors,
+  getParticipants,
+  getStats,
+} from "../api/events";
 import { createContext, useContext } from "react";
 import type { HelpRequest, RequestAction, Session } from "../shared/types";
 import { ApiError } from "../api/client";
@@ -60,6 +65,14 @@ export function useMentors() {
   return useQuery({
     queryKey: [...eventKey(s.eventId), "mentors", s.memberId, s.role],
     queryFn: () => getMentors(s.eventId),
+    ...live,
+  });
+}
+export function useParticipants() {
+  const s = useEventSession();
+  return useQuery({
+    queryKey: [...eventKey(s.eventId), "participants", s.memberId, s.role],
+    queryFn: () => getParticipants(s.eventId),
     ...live,
   });
 }

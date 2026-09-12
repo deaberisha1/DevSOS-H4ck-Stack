@@ -6,9 +6,12 @@ import {
   useEventSession,
   useEventStats,
   useMentors,
+  useParticipants,
   useRequests,
   eventKey,
 } from "../hooks/useEvent";
+import { elapsed, statusText, dateTime } from "../shared/requests";
+import { useNow } from "../hooks/useMotion";
 import { categoryOf } from "../shared/requests";
 import { Alert, Empty, Loading, Status, css } from "../components/event/UI";
 export default function OrganizerDashboard() {
@@ -16,7 +19,9 @@ export default function OrganizerDashboard() {
   const stats = useEventStats();
   const requests = useRequests();
   const mentors = useMentors();
+  const participants = useParticipants();
   const qc = useQueryClient();
+  useNow(1000); // keeps the waiting times below honest
   const [copy, setCopy] = useState("");
   const [confirm, setConfirm] = useState(false);
   const joinUrl = `${window.location.origin}/join?code=${encodeURIComponent(session.eventCode)}`;
@@ -153,7 +158,7 @@ export default function OrganizerDashboard() {
           </div>
         )
       )}
-      <section className={css.panel}>
+      <section className={css.panel} id="requests">
         <h2>Requests across the room</h2>
         <p className={css.meta}>
           Open any request for details and organizer actions.
@@ -197,7 +202,87 @@ export default function OrganizerDashboard() {
           <Empty title="No requests yet." />
         )}
       </section>
-      <section className={css.panel}>
+      <section className={css.panel} id="participants">
+        <div className={css.row}>
+          <h2>Everyone in the room</h2>
+          <span className={css.meta}>
+            {participants.data
+              ? `${participants.data.length} participants joined`
+              : ""}
+          </span>
+        </div>
+        <p className={css.meta}>
+          Every participant who has joined this event, what they are waiting on,
+          and how long it has been.
+        </p>
+        {participants.isPending ? (
+          <Loading text="Loading participants…" />
+        ) : participants.isError ? (
+          <Alert
+            error={participants.error}
+            retry={() => void participants.refetch()}
+          />
+        ) : participants.data?.length ? (
+          <div className={css.tableWrap}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Participant</th>
+                  <th>Table</th>
+                  <th>Joined</th>
+                  <th>Currently</th>
+                  <th>Requests</th>
+                </tr>
+              </thead>
+              <tbody>
+                {participants.data.map((person) => (
+                  <tr key={person.id}>
+                    <td>
+                      <strong>{person.displayName}</strong>
+                    </td>
+                    <td>{person.tableLabel || "—"}</td>
+                    <td>{person.joinedAt ? dateTime(person.joinedAt) : "—"}</td>
+                    <td>
+                      {person.activeRequest ? (
+                        <>
+                          <Link
+                            to={`/event/${session.eventId}/requests/${person.activeRequest.id}`}
+                          >
+                            {person.activeRequest.title}
+                          </Link>
+                          <br />
+                          <span className={css.meta}>
+                            {statusText[person.activeRequest.status]}
+                            {person.activeRequest.status === "WAITING"
+                              ? ` · waiting ${elapsed(person.activeRequest.createdAt)}`
+                              : person.activeRequest.mentorName
+                                ? ` · ${person.activeRequest.mentorName}`
+                                : ""}
+                          </span>
+                        </>
+                      ) : (
+                        <span className={css.meta}>Building — nothing open</span>
+                      )}
+                    </td>
+                    <td>
+                      {person.totalRequests} total
+                      <br />
+                      <span className={css.meta}>
+                        {person.resolvedRequests} resolved
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Empty title="No participants have joined yet.">
+            <p>Share the event code and join link above to open the room.</p>
+          </Empty>
+        )}
+      </section>
+      <section className={css.panel} id="mentors">
         <h2>Mentor overview</h2>
         {mentors.isPending ? (
           <Loading text="Loading mentors…" />

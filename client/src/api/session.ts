@@ -2,12 +2,14 @@ import type { Session, Tag } from "../shared/types";
 import { api, setCsrfToken } from "./client";
 
 export interface JoinInput {
-  requestedRole?: "PARTICIPANT" | "MENTOR";
+  requestedRole?: "PARTICIPANT" | "MENTOR" | "ORGANIZER";
   eventCode: string;
   displayName: string;
   tableLabel?: string;
   /** Never logged, never persisted. */
   mentorInvite?: string;
+  /** Never logged, never persisted. */
+  organizerInvite?: string;
 }
 
 export async function join(input: JoinInput): Promise<Session> {

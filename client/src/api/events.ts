@@ -1,4 +1,4 @@
-import type { EventStats } from "../shared/types";
+import type { EventStats, RequestStatus } from "../shared/types";
 import { api } from "./client";
 
 /** Organizer only. */
@@ -36,4 +36,26 @@ export function getEvent(eventId: string): Promise<EventInfo> {
 }
 export function getMentors(eventId: string): Promise<MentorInfo[]> {
   return api.get(`/api/events/${encodeURIComponent(eventId)}/mentors`);
+}
+
+export interface ParticipantInfo {
+  id: string;
+  displayName: string;
+  tableLabel?: string;
+  joinedAt?: string;
+  totalRequests: number;
+  resolvedRequests: number;
+  /** The one request they currently have open, if any. */
+  activeRequest?: {
+    id: string;
+    title: string;
+    status: RequestStatus;
+    createdAt: string;
+    mentorName?: string;
+  };
+}
+
+/** Organizer only: everyone who has joined this event as a participant. */
+export function getParticipants(eventId: string): Promise<ParticipantInfo[]> {
+  return api.get(`/api/events/${encodeURIComponent(eventId)}/participants`);
 }
