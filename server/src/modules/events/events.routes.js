@@ -50,7 +50,7 @@ router.post(
 router.post(
   '/join',
   asyncHandler(async (req, res) => {
-    const { eventCode, displayName, requestedRole, tableLabel, mentorInvite } = req.body;
+    const { eventCode, displayName, requestedRole, tableLabel, mentorInvite, organizerInvite } = req.body;
 
     const fieldErrors = {};
     if (!eventCode || !eventCode.trim()) fieldErrors.eventCode = 'Enter an event code.';
@@ -67,6 +67,7 @@ router.post(
       requestedRole,
       tableLabel: tableLabel ? tableLabel.trim() : undefined,
       mentorInvite,
+      organizerInvite,
     });
 
     res.cookie(SESSION_COOKIE, sessionId, COOKIE_OPTS);

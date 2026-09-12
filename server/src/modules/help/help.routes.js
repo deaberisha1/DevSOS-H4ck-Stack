@@ -3,7 +3,7 @@ const { authenticate, requireCsrf, requireEventMember, requireRole, requireOpenE
 const { ROLES } = require('../../shared/constants');
 const { asyncHandler } = require('../../shared/asyncHandler');
 const { createRequest, getRequests, getRequestById } = require('./help.service');
-const { runAssistant } = require('./help.agent');
+const { runAssistant, runAssistantChat } = require('./help.agent');
 
 const router = Router();
 
@@ -49,6 +49,11 @@ router.post(
 );
 
 // POST /api/events/:eventId/assist — AI assistant
+// Supports two shapes on the same endpoint:
+//  - { title, details, category, codeSnippet } — single-shot, from the
+//    "Get AI help" button on the request form -> { suggestions, resources?, simulated? }
+//  - { messages: [{role, content}], category } — the standalone AI Assistant
+//    chat page, whole conversation replayed each turn -> { reply, suggestions?, resources?, escalate?, simulated? }
 router.post(
   '/events/:eventId/assist',
   authenticate,
@@ -56,7 +61,13 @@ router.post(
   requireEventMember,
   requireRole(ROLES.PARTICIPANT),
   asyncHandler(async (req, res) => {
-    const { title, details, category, codeSnippet } = req.body;
+    const { title, details, category, codeSnippet, messages } = req.body;
+
+    if (Array.isArray(messages)) {
+      const response = await runAssistantChat({ messages, category });
+      return res.json(response);
+    }
+
     const response = await runAssistant({ title, details, category, codeSnippet });
     res.json(response);
   })

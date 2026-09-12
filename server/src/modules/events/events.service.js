@@ -27,12 +27,14 @@ async function createEvent(name) {
  * Join an event. Role is derived server-side, never trusted from the
  * client beyond `requestedRole` as a hint:
  *  - eventCode matching the event's organizer_code -> ORGANIZER
- *    (this path is intentionally not exposed in the join UI)
+ *    (legacy path, kept for compatibility)
+ *  - requestedRole === 'ORGANIZER' -> ORGANIZER, but only if organizerInvite
+ *    matches the event's organizer_code
  *  - requestedRole === 'MENTOR' -> MENTOR, but only if mentorInvite
  *    matches the event's mentor_code
  *  - otherwise -> PARTICIPANT
  */
-async function joinEvent({ eventCode, displayName, requestedRole, tableLabel, mentorInvite }) {
+async function joinEvent({ eventCode, displayName, requestedRole, tableLabel, mentorInvite, organizerInvite }) {
   const [events] = await query(
     `SELECT * FROM events WHERE event_code = ? OR organizer_code = ?`,
     [eventCode, eventCode]
@@ -53,6 +55,14 @@ async function joinEvent({ eventCode, displayName, requestedRole, tableLabel, me
 
   let role = ROLES.PARTICIPANT;
   if (eventCode === event.organizer_code) {
+    role = ROLES.ORGANIZER;
+  } else if (requestedRole === 'ORGANIZER') {
+    if (!organizerInvite || organizerInvite !== event.organizer_code) {
+      throw createError(403, 'Invalid organizer invitation', {
+        code: 'FORBIDDEN',
+        fieldErrors: { organizerInvite: 'Invalid organizer invitation' },
+      });
+    }
     role = ROLES.ORGANIZER;
   } else if (requestedRole === 'MENTOR') {
     if (!mentorInvite || mentorInvite !== event.mentor_code) {
