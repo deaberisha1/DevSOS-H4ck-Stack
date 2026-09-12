@@ -2,6 +2,7 @@ import type { Session, Tag } from "../shared/types";
 import { api, setCsrfToken } from "./client";
 
 export interface JoinInput {
+  requestedRole?: "PARTICIPANT" | "MENTOR";
   eventCode: string;
   displayName: string;
   tableLabel?: string;
@@ -31,5 +32,8 @@ export function updateMe(
   eventId: string,
   patch: { skills: Tag[]; isAvailable: boolean },
 ): Promise<Session> {
-  return api.patch<Session>(`/api/events/${encodeURIComponent(eventId)}/me`, patch);
+  return api.patch<Session>(
+    `/api/events/${encodeURIComponent(eventId)}/me`,
+    patch,
+  );
 }

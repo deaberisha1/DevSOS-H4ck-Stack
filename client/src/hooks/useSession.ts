@@ -22,7 +22,10 @@ export function useSession() {
       }
     },
     staleTime: 30_000,
-    retry: (count, err) => !(err instanceof ApiError) || err.status >= 500 ? count < 1 : false,
+    refetchInterval: 4000,
+    refetchIntervalInBackground: false,
+    retry: (count, err) =>
+      !(err instanceof ApiError) || err.status >= 500 ? count < 1 : false,
   });
 }
 
@@ -31,6 +34,8 @@ export function useJoin() {
   return useMutation<Session, ApiError, JoinInput>({
     mutationFn: join,
     onSuccess: (session) => {
+      // A fresh login must not reuse payloads from an expired identity.
+      qc.removeQueries({ queryKey: ["event"] });
       qc.setQueryData(sessionKey, session);
     },
   });

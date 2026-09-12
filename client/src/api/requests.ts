@@ -1,4 +1,10 @@
-import type { HelpRequest, RequestAction, RequestStatus, Tag } from "../shared/types";
+import type {
+  Category,
+  HelpRequest,
+  RequestAction,
+  RequestStatus,
+  Tag,
+} from "../shared/types";
 import { api, toQuery } from "./client";
 
 export interface QueueFilters {
@@ -7,6 +13,8 @@ export interface QueueFilters {
 }
 
 export interface CreateRequestInput {
+  category: Category;
+  codeSnippet?: string;
   /** Stable per submission attempt — the server de-duplicates on it. */
   clientRequestId: string;
   title: string;
@@ -29,8 +37,13 @@ export function listRequests(
   );
 }
 
-export function getRequest(eventId: string, requestId: string): Promise<HelpRequest> {
-  return api.get<HelpRequest>(`${base(eventId)}/${encodeURIComponent(requestId)}`);
+export function getRequest(
+  eventId: string,
+  requestId: string,
+): Promise<HelpRequest> {
+  return api.get<HelpRequest>(
+    `${base(eventId)}/${encodeURIComponent(requestId)}`,
+  );
 }
 
 export function createRequest(

@@ -1,13 +1,11 @@
 export type RequestStatus =
-  | "WAITING"
-  | "CLAIMED"
-  | "IN_PROGRESS"
-  | "RESOLVED"
-  | "CANCELLED";
+  "WAITING" | "CLAIMED" | "IN_PROGRESS" | "RESOLVED" | "CANCELLED";
 
 export type Role = "PARTICIPANT" | "MENTOR" | "ORGANIZER";
+export type Category = "Frontend" | "Backend" | "Git" | "Deployment" | "Other";
 
 export type Tag =
+  | "Other"
   | "React"
   | "JavaScript"
   | "TypeScript"
@@ -18,6 +16,10 @@ export type Tag =
   | "UI";
 
 export interface HelpRequest {
+  requesterId?: string;
+  mentorId?: string;
+  category?: Category;
+  codeSnippet?: string;
   id: string;
   eventId: string;
   status: RequestStatus;
@@ -39,12 +41,14 @@ export interface HelpRequest {
   cancelledAt?: string;
 }
 
-export type RequestAction = "claim" | "start" | "release" | "resolve" | "cancel";
+export type RequestAction =
+  "claim" | "start" | "release" | "resolve" | "cancel";
 
 export type EventStatus = "OPEN" | "CLOSED";
 
 /** GET /api/session */
 export interface Session {
+  eventName?: string;
   memberId: string;
   eventId: string;
   eventCode: string;

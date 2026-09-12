@@ -1,6 +1,7 @@
 import type { ApiErrorBody, FieldErrors } from "../shared/types";
 
-export const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+export const USE_MOCK =
+  import.meta.env.DEV && import.meta.env.VITE_USE_MOCK === "true";
 
 /**
  * Every failure the UI has to render. `userMessage` is the copy from the
@@ -53,11 +54,11 @@ function userMessageFor(status: number, serverMessage: string): string {
     case 401:
       return "Your session ended. Please join the event again.";
     case 403:
-      return "You don't have permission for this action";
+      return serverMessage || "You don't have permission for this action";
     case 404:
       return "This request is no longer available";
     case 409:
-      return "Another mentor took this request";
+      return serverMessage || "This request changed. Refresh and try again.";
     case 429:
       return "Too many attempts, try again in a moment";
     default:
@@ -94,8 +95,11 @@ export type Transport = (
 
 const httpTransport: Transport = async (method, path, body, headers) => {
   let res: Response;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
     res = await fetch(path, {
+      signal: controller.signal,
       method,
       credentials: "include",
       headers: {
@@ -107,7 +111,13 @@ const httpTransport: Transport = async (method, path, body, headers) => {
     });
   } catch {
     // Network failure: no status, no way to know if a write landed.
-    throw new ApiError({ status: 0, code: "NETWORK", message: "Network error" });
+    throw new ApiError({
+      status: 0,
+      code: "NETWORK",
+      message: "Network error",
+    });
+  } finally {
+    clearTimeout(timeout);
   }
   if (res.status === 204) return { status: 204, body: null };
   const text = await res.text();
